@@ -1,0 +1,664 @@
+<!doctype html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>aaencode/aadecode - Japanese style emoticons</title>
+  <style>
+    :root {
+      --main-bg-color: #111;
+      --secondary-bg-color: #222;
+      --highlight-color: #8aff00;
+      --text-color: #fff;
+      --border-color: #333;
+    }
+    
+    body {
+      background-color: var(--main-bg-color);
+      color: var(--text-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      color: var(--highlight-color);
+      margin: 0;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+    }
+    
+    h1::before {
+      content: "/";
+      margin-right: 8px;
+    }
+    
+    .version {
+      background-color: rgba(255,255,255,0.2);
+      color: var(--text-color);
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 10px;
+    }
+    
+    h4 {
+      color: #aaa;
+      font-weight: normal;
+      margin-top: 0;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+    
+    .tab.active {
+      border-bottom: 2px solid var(--highlight-color);
+      color: var(--highlight-color);
+    }
+    
+    .file-types {
+      margin-bottom: 20px;
+    }
+    
+    .file-type-label {
+      margin-right: 10px;
+      color: #aaa;
+    }
+    
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 10px 0 20px 0;
+    }
+    
+    .radio-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .dropzone {
+      border: 2px dashed #444;
+      padding: 40px 20px;
+      text-align: center;
+      background-color: var(--secondary-bg-color);
+      border-radius: 4px;
+      margin-bottom: 20px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .dropzone-icon {
+      font-size: 48px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    
+    textarea {
+      width: 100%;
+      height: 200px;
+      background-color: var(--secondary-bg-color);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 10px;
+      box-sizing: border-box;
+      font-family: monospace;
+      resize: vertical;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    button {
+      background-color: var(--secondary-bg-color);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    
+    button:hover:not(:disabled) {
+      background-color: var(--border-color);
+    }
+    
+    button:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    button.primary {
+      background-color: var(--highlight-color);
+      color: var(--main-bg-color);
+      border: none;
+    }
+    
+    button.primary:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+    
+    .instructions {
+      background-color: rgba(138, 255, 0, 0.1);
+      border-left: 4px solid var(--highlight-color);
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .instructions h3 {
+      margin-top: 0;
+      color: var(--highlight-color);
+    }
+    
+    .instructions ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+    
+    .instructions li {
+      margin-bottom: 10px;
+    }
+    
+    footer {
+      margin-top: 40px;
+      color: #666;
+      font-size: 14px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+    }
+    
+    footer a {
+      color: #aaa;
+      text-decoration: none;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>aaencode/aadecode <span class="version">1.0</span></h1>
+    </header>
+    
+    <h4>AAEncoder/AADecoder for JavaScript to/from Japanese style emoticons</h4>
+    
+    <div class="tabs">
+      <div class="tab active">粘贴代码</div>
+      <div class="tab">本地文件</div>
+      <div class="tab">远程文件</div>
+      <div class="tab">关于工具</div>
+    </div>
+    
+    <div class="file-types">
+      <div class="file-type-label">文件类型:</div>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input type="radio" name="fileType" checked> JavaScript (.js)
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="fileType"> Python (.py)
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="fileType"> PHP (.php)
+        </label>
+      </div>
+    </div>
+    
+    <div class="dropzone">
+      <div class="dropzone-icon">📄</div>
+      <div>拖放文件到这里</div>
+      <div style="color: #666; margin-top: 10px;">或点击此处选择文件</div>
+    </div>
+    
+    <textarea id="t" placeholder="Enter JavaScript source or emoticons"></textarea>
+    
+    <div class="button-group">
+      <button id="encode-btn" class="primary" disabled onclick="encodeText()">加密</button>
+      <button id="decode-btn" disabled onclick="decodeText()">解密</button>
+      <button id="clear-btn" onclick="document.getElementById('t').value=''">清除</button>
+    </div>
+    
+    <div class="radio-group">
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="auto" checked> 自动检测
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="common"> Common
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="jjencode"> JJencode
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="aaencode"> AAencode
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="sojson"> Sojson
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="sojsonv7"> SojsonV7
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="obfuscator"> Obfuscator 
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="awsc"> Awsc
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="part2ai"> Part2AI
+      </label>
+    </div>
+    
+    <div class="instructions">
+      <h3>使用方法:</h3>
+      <ol>
+        <li>粘贴混淆代码，选择文件类型和解密类型</li>
+        <li>点击"点击解码"按钮，系统会打开GitHub issue创建页面</li>
+        <li>在打开的页面中点击"Submit new issue"按钮</li>
+        <li>提交后回到本页面，记下issue编号(例如#123)</li>
+        <li>输入issue编号并等待约60秒，GitHub Actions会处理你的请求</li>
+      </ol>
+    </div>
+    
+    <footer>
+      Some code from <a target="_blank" href="http://utf-8.jp/public/aaencode.html">utf-8.jp</a>
+      <p>Created by <a target="_blank" href="https://github.com/jamtg">jamtg</a></p>
+    </footer>
+  </div>
+  
+  <!-- 引入各种加密/解密脚本 -->
+  <script src="https://cdn.jsdelivr.net/gh/encoded-utf8/aaencode@latest/aaencode.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/encoded-utf8/aaencode@latest/aadecode.js"></script>
+  <script src="./jjencode.js"></script>
+  <script src="./jjdecode.js"></script>
+  <script src="./sojson.js"></script>
+  <script src="./sojsonv7.js"></script>
+  <script src="./obfuscator.js"></script>
+  <script src="./awsc.js"></script>
+  <script src="./part2ai.js"></script>
+  <script src="./common.js"></script>
+  
+  <script>
+    // 备用函数，仅在无法加载外部脚本时使用
+    if (typeof aaencode !== 'function') {
+      function aaencode(text) {
+        return text; // 简单返回原文，实际使用时会由外部脚本提供
+      }
+    }
+    
+    if (typeof aadecode !== 'function') {
+      function aadecode(text) {
+        return text; // 简单返回原文，实际使用时会由外部脚本提供
+      }
+    }
+    
+    // 其他加密/解密函数的备用实现
+    if (typeof jjencode !== 'function') {
+      function jjencode(text) { return "JJencode: " + text; }
+    }
+    
+    if (typeof jjdecode !== 'function') {
+      function jjdecode(text) { return "JJdecode: " + text; }
+    }
+    
+    if (typeof sojsonEncode !== 'function') {
+      function sojsonEncode(text) { return "Sojson加密: " + text; }
+    }
+    
+    if (typeof sojsonDecode !== 'function') {
+      function sojsonDecode(text) { return "Sojson解密: " + text; }
+    }
+    
+    if (typeof sojsonv7Encode !== 'function') {
+      function sojsonv7Encode(text) { return "SojsonV7加密: " + text; }
+    }
+    
+    if (typeof sojsonv7Decode !== 'function') {
+      function sojsonv7Decode(text) { return "SojsonV7解密: " + text; }
+    }
+    
+    if (typeof obfuscatorEncode !== 'function') {
+      function obfuscatorEncode(text) { return "Obfuscator加密: " + text; }
+    }
+    
+    if (typeof obfuscatorDecode !== 'function') {
+      function obfuscatorDecode(text) { return "Obfuscator解密: " + text; }
+    }
+    
+    if (typeof awscEncode !== 'function') {
+      function awscEncode(text) { return "Awsc加密: " + text; }
+    }
+    
+    if (typeof awscDecode !== 'function') {
+      function awscDecode(text) { return "Awsc解密: " + text; }
+    }
+    
+    if (typeof part2aiEncode !== 'function') {
+      function part2aiEncode(text) { return "Part2AI加密: " + text; }
+    }
+    
+    if (typeof part2aiDecode !== 'function') {
+      function part2aiDecode(text) { return "Part2AI解密: " + text; }
+    }
+    
+    if (typeof commonEncode !== 'function') {
+      function commonEncode(text) { return "Common加密: " + text; }
+    }
+    
+    if (typeof commonDecode !== 'function') {
+      function commonDecode(text) { return "Common解密: " + text; }
+    }
+    
+    // 添加事件监听器以添加交互功能
+    document.addEventListener('DOMContentLoaded', function() {
+      // 获取按钮元素
+      const encodeBtn = document.getElementById('encode-btn');
+      const decodeBtn = document.getElementById('decode-btn');
+      
+      // 获取所有插件选项
+      const pluginOptions = document.querySelectorAll('input[name="encodeType"]');
+      
+      // 默认禁用加密和解密按钮
+      encodeBtn.disabled = true;
+      decodeBtn.disabled = true;
+      
+      // 监听textarea内容变化，启用按钮
+      document.getElementById('t').addEventListener('input', function() {
+        if (this.value.trim() !== '') {
+          encodeBtn.disabled = false;
+          decodeBtn.disabled = false;
+        } else {
+          encodeBtn.disabled = true;
+          decodeBtn.disabled = true;
+        }
+      });
+      
+      // 监听插件选择变化
+      pluginOptions.forEach(function(option) {
+        option.addEventListener('change', function() {
+          if(this.checked) {
+            const pluginType = this.value;
+            
+            // 根据选中的插件类型启用相应按钮
+            switch(pluginType) {
+              case 'auto':
+              case 'aaencode':
+              case 'common':
+              case 'jjencode':
+              case 'sojson':
+              case 'sojsonv7':
+              case 'obfuscator':
+              case 'awsc':
+              case 'part2ai':
+                // 所有模式下，如果有文本则启用两个按钮
+                if (document.getElementById('t').value.trim() !== '') {
+                  encodeBtn.disabled = false;
+                  decodeBtn.disabled = false;
+                }
+                break;
+              default:
+                // 默认情况下，禁用按钮
+                encodeBtn.disabled = true;
+                decodeBtn.disabled = true;
+            }
+            
+            // 更新按钮文本
+            updateButtonText(pluginType);
+          }
+        });
+      });
+      
+      // Tab切换功能
+      var tabs = document.querySelectorAll('.tab');
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          tabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+      
+      // 上传区域交互
+      var dropzone = document.querySelector('.dropzone');
+      
+      // 拖放功能
+      dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.style.backgroundColor = 'rgba(50, 50, 50, 0.5)';
+      });
+      
+      dropzone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.style.backgroundColor = '';
+      });
+      
+      dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.style.backgroundColor = '';
+        
+        var file = e.dataTransfer.files[0];
+        if(file) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById('t').value = e.target.result;
+            // Enable buttons when content is loaded
+            encodeBtn.disabled = false;
+            decodeBtn.disabled = false;
+          };
+          reader.readAsText(file);
+        }
+      });
+      
+      // 点击上传功能
+      dropzone.addEventListener('click', function() {
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.onchange = function(e) {
+          var file = e.target.files[0];
+          if(file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+              document.getElementById('t').value = e.target.result;
+              // Enable buttons when content is loaded
+              encodeBtn.disabled = false;
+              decodeBtn.disabled = false;
+            };
+            reader.readAsText(file);
+          }
+        };
+        fileInput.click();
+      });
+    });
+    
+    // 更新按钮文本
+    function updateButtonText(pluginType) {
+      const encodeBtn = document.getElementById('encode-btn');
+      const decodeBtn = document.getElementById('decode-btn');
+      
+      switch(pluginType) {
+        case 'aaencode':
+          encodeBtn.textContent = 'AAencode';
+          decodeBtn.textContent = 'AAdecode';
+          break;
+        case 'jjencode':
+          encodeBtn.textContent = 'JJencode';
+          decodeBtn.textContent = 'JJdecode';
+          break;
+        case 'sojson':
+          encodeBtn.textContent = 'Sojson加密';
+          decodeBtn.textContent = 'Sojson解密';
+          break;
+        case 'sojsonv7':
+          encodeBtn.textContent = 'SojsonV7加密';
+          decodeBtn.textContent = 'SojsonV7解密';
+          break;
+        case 'obfuscator':
+          encodeBtn.textContent = 'Obfuscator加密';
+          decodeBtn.textContent = 'Obfuscator解密';
+          break;
+        case 'awsc':
+          encodeBtn.textContent = 'Awsc加密';
+          decodeBtn.textContent = 'Awsc解密';
+          break;
+        case 'part2ai':
+          encodeBtn.textContent = 'Part2AI加密';
+          decodeBtn.textContent = 'Part2AI解密';
+          break;
+        case 'common':
+          encodeBtn.textContent = 'Common加密';
+          decodeBtn.textContent = 'Common解密';
+          break;
+        default:
+          encodeBtn.textContent = '加密';
+          decodeBtn.textContent = '解密';
+      }
+    }
+    
+    // 执行加密操作
+    function encodeText() {
+      const textArea = document.getElementById('t');
+      const text = textArea.value;
+      const selectedPlugin = document.querySelector('input[name="encodeType"]:checked').value;
+      
+      let result = text;
+      
+      // 根据选中的插件类型执行相应的加密操作
+      switch(selectedPlugin) {
+        case 'aaencode':
+          result = aaencode(text);
+          break;
+        case 'jjencode':
+          result = jjencode(text);
+          break;
+        case 'sojson':
+          result = sojsonEncode(text);
+          break;
+        case 'sojsonv7':
+          result = sojsonv7Encode(text);
+          break;
+        case 'obfuscator':
+          result = obfuscatorEncode(text);
+          break;
+        case 'awsc':
+          result = awscEncode(text);
+          break;
+        case 'part2ai':
+          result = part2aiEncode(text);
+          break;
+        case 'common':
+          result = commonEncode(text);
+          break;
+        case 'auto':
+          // 自动检测模式，根据内容特征选择合适的加密方法
+          if(text.includes('function') || text.includes('var ')) {
+            result = aaencode(text);
+          } else {
+            result = commonEncode(text);
+          }
+          break;
+      }
+      
+      textArea.value = result;
+    }
+    
+    // 执行解密操作
+    function decodeText() {
+      const textArea = document.getElementById('t');
+      const text = textArea.value;
+      const selectedPlugin = document.querySelector('input[name="encodeType"]:checked').value;
+      
+      let result = text;
+      
+      // 根据选中的插件类型执行相应的解密操作
+      switch(selectedPlugin) {
+        case 'aaencode':
+          result = aadecode(text);
+          break;
+        case 'jjencode':
+          result = jjdecode(text);
+          break;
+        case 'sojson':
+          result = sojsonDecode(text);
+          break;
+        case 'sojsonv7':
+          result = sojsonv7Decode(text);
+          break;
+        case 'obfuscator':
+          result = obfuscatorDecode(text);
+          break;
+        case 'awsc':
+          result = awscDecode(text);
+          break;
+        case 'part2ai':
+          result = part2aiDecode(text);
+          break;
+        case 'common':
+          result = commonDecode(text);
+          break;
+        case 'auto':
+          // 自动检测模式，尝试各种解密方法
+          if(text.includes('ﾟωﾟﾉ') || text.includes('(ﾟДﾟ)')) {
+            result = aadecode(text);
+          } else if(text.includes('$._') || text.match(/\$\.\$\$/)) {
+            result = jjdecode(text);
+          } else if(text.includes('var _0x')) {
+            result = sojsonDecode(text);
+          } else if(text.includes('function _0x')) {
+            result = sojsonv7Decode(text);
+          } else if(text.includes('_0x') && text.includes('shift')) {
+            result = obfuscatorDecode(text);
+          } else if(text.includes('eval(function(p,a,c,k,e,d)')) {
+            result = commonDecode(text);
+          } else {
+            // Try common decode as fallback
+            result = commonDecode(text);
+          }
+          break;
+      }
+      
+      textArea.value = result;
+    }
+  </script>
+</body>
+</html>
