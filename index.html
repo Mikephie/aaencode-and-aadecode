@@ -156,6 +156,10 @@
       background-color: var(--border-color);
     }
     
+    button:active {
+      transform: translateY(1px);
+    }
+    
     button.primary {
       background-color: var(--highlight-color);
       color: var(--main-bg-color);
@@ -164,7 +168,6 @@
     
     button.primary:hover {
       opacity: 0.9;
-    }
     
     .instructions {
       background-color: rgba(138, 255, 0, 0.1);
@@ -293,7 +296,155 @@
     </footer>
   </div>
   
-  <script src="./aaencode.js"></script>
-  <script src="./aadecode.js"></script>
+  <script>
+    // 内嵌aaencode和aadecode函数，确保按钮有功能
+    
+    // aaencode函数
+    function aaencode(text) {
+      var t;
+      var b = [
+        "(c^_^o)",
+        "(ﾟΘﾟ)",
+        "((o^_^o) - (ﾟΘﾟ))",
+        "(o^_^o)",
+        "(ﾟｰﾟ)",
+        "((ﾟｰﾟ) + (ﾟΘﾟ))",
+        "((o^_^o) +(o^_^o))",
+        "((ﾟｰﾟ) + (o^_^o))",
+        "((ﾟｰﾟ) + (ﾟｰﾟ))",
+        "((ﾟｰﾟ) + (ﾟｰﾟ) + (ﾟΘﾟ))",
+        "(ﾟДﾟ) .ﾟωﾟﾉ",
+        "(ﾟДﾟ) .ﾟΘﾟﾉ",
+        "(ﾟДﾟ) ['c']",
+        "(ﾟДﾟ) .ﾟｰﾟﾉ",
+        "(ﾟДﾟ) .ﾟДﾟﾉ",
+        "(ﾟДﾟ) [ﾟΘﾟ]"
+      ];
+      
+      var r = "ﾟωﾟﾉ= /｀ｍ´）ﾉ ~┻━┻   //*´∇｀*/ ['_']; o=(ﾟｰﾟ)  =_=3; c=(ﾟΘﾟ) =(ﾟｰﾟ)-(ﾟｰﾟ); " +
+        "(ﾟДﾟ) =(ﾟΘﾟ)= (o^_^o)/ (o^_^o);(ﾟДﾟ)={ﾟΘﾟ: '_' ,ﾟωﾟﾉ : ((ﾟωﾟﾉ==3) +'_') [ﾟΘﾟ] " +
+        ",ﾟｰﾟﾉ :(ﾟωﾟﾉ+ '_')[o^_^o -(ﾟΘﾟ)] ,ﾟДﾟﾉ:((ﾟｰﾟ==3) +'_')[ﾟｰﾟ] }; (ﾟДﾟ)[ﾟΘﾟ] =((ﾟωﾟﾉ==3) +'_') [c^_^o];" +
+        "(ﾟДﾟ)['c'] = ((ﾟДﾟ)+'_') [ (ﾟｰﾟ)+(ﾟｰﾟ)-(ﾟΘﾟ) ];" +
+        "(ﾟДﾟ)['o'] = ((ﾟДﾟ)+'_') [ﾟΘﾟ];" +
+        "(ﾟoﾟ)=(ﾟДﾟ)['c']+(ﾟДﾟ)['o']+(ﾟωﾟﾉ +'_')[ﾟΘﾟ]+ ((ﾟωﾟﾉ==3) +'_') [ﾟｰﾟ] + " +
+        "((ﾟДﾟ) +'_') [(ﾟｰﾟ)+(ﾟｰﾟ)]+ ((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+" +
+        "((ﾟｰﾟ==3) +'_') [(ﾟｰﾟ) - (ﾟΘﾟ)]+(ﾟДﾟ)['c']+" +
+        "((ﾟДﾟ)+'_') [(ﾟｰﾟ)+(ﾟｰﾟ)]+ (ﾟДﾟ)['o']+" +
+        "((ﾟｰﾟ==3) +'_') [ﾟΘﾟ];(ﾟДﾟ)['_'] =(o^_^o) [ﾟΘﾟ] [ﾟΘﾟ];" +
+        "(ﾟεﾟ)=((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+ (ﾟДﾟ) .ﾟДﾟﾉ+" +
+        "((ﾟДﾟ)+'_') [(ﾟｰﾟ) + (ﾟｰﾟ)]+((ﾟｰﾟ==3) +'_') [o^_^o -ﾟΘﾟ]+" +
+        "((ﾟｰﾟ==3) +'_') [ﾟΘﾟ]+ (ﾟωﾟﾉ +'_') [ﾟΘﾟ]; " +
+        "(ﾟｰﾟ)+=(ﾟΘﾟ); (ﾟДﾟ)[ﾟεﾟ]='\\\\'; " +
+        "(ﾟДﾟ).ﾟΘﾟﾉ=(ﾟДﾟ+ ﾟｰﾟ)[o^_^o-(ﾟΘﾟ)];" +
+        "(oﾟｰﾟo)=(ﾟωﾟﾉ +'_')[c^_^o];" +
+        "(ﾟДﾟ) [ﾟoﾟ]='\\\"';" +
+        "(ﾟДﾟ) ['_'] ( (ﾟДﾟ) ['_'] (ﾟεﾟ+";
+        
+      r += "(ﾟДﾟ)[ﾟoﾟ]+ ";
+        
+      for(var i = 0; i < text.length; i++) {
+        var n = text.charCodeAt(i);
+        var t = "(ﾟДﾟ)[ﾟεﾟ]+";
+        
+        if(n <= 127) {
+          t += n.toString(8).replace(/[0-7]/g, function(c) {
+            return b[c] + "+ ";
+          });
+        } else {
+          var m = encodeURIComponent(text.charAt(i)).substr(1).split('%');
+          for(var j = 0; j < m.length; j++) {
+            t += "(oﾟｰﾟo)+ " + parseInt(m[j], 16).toString(8).replace(/[0-7]/g, function(c) {
+              return b[c] + "+ ";
+            });
+          }
+        }
+        r += t;
+      }
+        
+      r += "(ﾟДﾟ)[ﾟoﾟ]) (ﾟΘﾟ)) ('_');";
+      return r;
+    }
+    
+    // aadecode函数
+    function aadecode(text) {
+      var evalPreamble = "(\uFF9F\u0414\uFF9F) ['_'] ( (\uFF9F\u0414\uFF9F) ['_'] (";
+      var decodePreamble = "( (\uFF9F\u0414\uFF9F) ['_'] (";
+      var evalPostamble = ") (\uFF9F\u0398\uFF9F)) ('_');";
+      var decodePostamble = ") ());";
+      
+      // 检查文本是否具有aaencode格式
+      if(text.lastIndexOf(evalPreamble) != 0) {
+        return text;
+      }
+      
+      // 尝试解码
+      try {
+        var decodingScript = text.replace(evalPreamble, decodePreamble).replace(evalPostamble, decodePostamble);
+        return eval(decodingScript) || 'Failed to decode';
+      } catch(e) {
+        return "错误：无法解码 - " + e.message;
+      }
+    }
+    
+    // 添加事件监听器以添加交互功能
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab切换功能
+      var tabs = document.querySelectorAll('.tab');
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          tabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+      
+      // 上传区域交互
+      var dropzone = document.querySelector('.dropzone');
+      
+      // 拖放功能
+      dropzone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.style.backgroundColor = 'rgba(50, 50, 50, 0.5)';
+      });
+      
+      dropzone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.style.backgroundColor = '';
+      });
+      
+      dropzone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.style.backgroundColor = '';
+        
+        var file = e.dataTransfer.files[0];
+        if(file) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById('t').value = e.target.result;
+          };
+          reader.readAsText(file);
+        }
+      });
+      
+      // 点击上传功能
+      dropzone.addEventListener('click', function() {
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.onchange = function(e) {
+          var file = e.target.files[0];
+          if(file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+              document.getElementById('t').value = e.target.result;
+            };
+            reader.readAsText(file);
+          }
+        };
+        fileInput.click();
+      });
+    });
+  </script>
 </body>
 </html>
