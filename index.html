@@ -306,15 +306,15 @@
   </div>
   
   <!-- 引入各种加密/解密脚本 -->
-  <script src="https://cdn.jsdelivr.net/gh/encoded-utf8/aaencode@latest/aaencode.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/encoded-utf8/aaencode@latest/aadecode.js"></script>
+  <script src="aaencode.js"></script>
+  <script src="aadecode.js"></script>
   <script src="./jjencode.js"></script>
   <script src="./jjdecode.js"></script>
   <script src="./sojson.js"></script>
   <script src="./sojsonv7.js"></script>
   <script src="./obfuscator.js"></script>
   <script src="./awsc.js"></script>
-  <script src="./part2ai.js"></script>
+  <script src="./eval.js"></script>
   <script src="./common.js"></script>
   
   <script>
@@ -372,12 +372,12 @@
       function awscDecode(text) { return "Awsc解密: " + text; }
     }
     
-    if (typeof part2aiEncode !== 'function') {
-      function part2aiEncode(text) { return "Part2AI加密: " + text; }
+    if (typeof evalEncode !== 'function') {
+      function evalEncode(text) { return "Eval加密: " + text; }
     }
     
-    if (typeof part2aiDecode !== 'function') {
-      function part2aiDecode(text) { return "Part2AI解密: " + text; }
+    if (typeof evalDecode !== 'function') {
+      function evalDecode(text) { return "Eval解密: " + text; }
     }
     
     if (typeof commonEncode !== 'function') {
@@ -428,7 +428,7 @@
               case 'sojsonv7':
               case 'obfuscator':
               case 'awsc':
-              case 'part2ai':
+              case 'eval':
                 // 所有模式下，如果有文本则启用两个按钮
                 if (document.getElementById('t').value.trim() !== '') {
                   encodeBtn.disabled = false;
@@ -542,8 +542,8 @@
           decodeBtn.textContent = 'Awsc解密';
           break;
         case 'part2ai':
-          encodeBtn.textContent = 'Part2AI加密';
-          decodeBtn.textContent = 'Part2AI解密';
+          encodeBtn.textContent = 'Eval加密';
+          decodeBtn.textContent = 'Eval解密';
           break;
         case 'common':
           encodeBtn.textContent = 'Common加密';
@@ -584,7 +584,7 @@
           result = awscEncode(text);
           break;
         case 'part2ai':
-          result = part2aiEncode(text);
+          result = evalEncode(text);
           break;
         case 'common':
           result = commonEncode(text);
@@ -631,7 +631,7 @@
           result = awscDecode(text);
           break;
         case 'part2ai':
-          result = part2aiDecode(text);
+          result = evalDecode(text);
           break;
         case 'common':
           result = commonDecode(text);
