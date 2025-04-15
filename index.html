@@ -152,12 +152,17 @@
       transition: all 0.2s;
     }
     
-    button:hover {
+    button:hover:not(:disabled) {
       background-color: var(--border-color);
     }
     
-    button:active {
+    button:active:not(:disabled) {
       transform: translateY(1px);
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
     
     button.primary {
@@ -166,7 +171,7 @@
       border: none;
     }
     
-    button.primary:hover {
+    button.primary:hover:not(:disabled) {
       opacity: 0.9;
     
     .instructions {
@@ -247,35 +252,38 @@
     <textarea id="t" placeholder="Enter JavaScript source or emoticons"></textarea>
     
     <div class="button-group">
-      <button id="e" class="primary" onclick="document.getElementById('t').value=aaencode(document.getElementById('t').value)">aaencode</button>
-      <button id="d" onclick="document.getElementById('t').value=aadecode(document.getElementById('t').value)">aadecode</button>
-      <button id="c" onclick="document.getElementById('t').value=''">clear</button>
+      <button id="encode-btn" class="primary" disabled onclick="encodeText()">加密</button>
+      <button id="decode-btn" disabled onclick="decodeText()">解密</button>
+      <button id="clear-btn" onclick="document.getElementById('t').value=''">清除</button>
     </div>
     
     <div class="radio-group">
       <label class="radio-label">
-        <input type="radio" name="encodeType" checked> 自动检测
+        <input type="radio" name="encodeType" value="auto" checked> 自动检测
       </label>
       <label class="radio-label">
-        <input type="radio" name="encodeType"> Common
+        <input type="radio" name="encodeType" value="common"> Common
       </label>
       <label class="radio-label">
-        <input type="radio" name="encodeType"> JJencode
+        <input type="radio" name="encodeType" value="jjencode"> JJencode
       </label>
       <label class="radio-label">
-        <input type="radio" name="encodeType"> Sojson
+        <input type="radio" name="encodeType" value="aaencode"> AAencode
       </label>
       <label class="radio-label">
-        <input type="radio" name="encodeType"> SojsonV7
+        <input type="radio" name="encodeType" value="sojson"> Sojson
       </label>
       <label class="radio-label">
-        <input type="radio" name="encodeType"> Obfuscator 
+        <input type="radio" name="encodeType" value="sojsonv7"> SojsonV7
       </label>
       <label class="radio-label">
-        <input type="radio" name="encodeType"> Awsc
+        <input type="radio" name="encodeType" value="obfuscator"> Obfuscator 
       </label>
       <label class="radio-label">
-        <input type="radio" name="encodeType"> Part2AI
+        <input type="radio" name="encodeType" value="awsc"> Awsc
+      </label>
+      <label class="radio-label">
+        <input type="radio" name="encodeType" value="part2ai"> Part2AI
       </label>
     </div>
     
@@ -303,6 +311,58 @@
   <script>
     // 添加事件监听器以添加交互功能
     document.addEventListener('DOMContentLoaded', function() {
+      // 获取按钮元素
+      const encodeBtn = document.getElementById('encode-btn');
+      const decodeBtn = document.getElementById('decode-btn');
+      
+      // 获取所有插件选项
+      const pluginOptions = document.querySelectorAll('input[name="encodeType"]');
+      
+      // 默认禁用加密和解密按钮
+      encodeBtn.disabled = true;
+      decodeBtn.disabled = true;
+      
+      // 监听插件选择变化
+      pluginOptions.forEach(function(option) {
+        option.addEventListener('change', function() {
+          if(this.checked) {
+            const pluginType = this.value;
+            
+            // 根据选中的插件类型启用相应按钮
+            switch(pluginType) {
+              case 'auto':
+                // 自动检测模式下，两个按钮都启用
+                encodeBtn.disabled = false;
+                decodeBtn.disabled = false;
+                break;
+              case 'aaencode':
+                // AAencode 模式下，两个按钮都启用
+                encodeBtn.disabled = false;
+                decodeBtn.disabled = false;
+                break;
+              case 'common':
+              case 'jjencode':
+              case 'sojson':
+              case 'sojsonv7':
+              case 'obfuscator':
+              case 'awsc':
+              case 'part2ai':
+                // 其他模式下，也启用两个按钮
+                encodeBtn.disabled = false;
+                decodeBtn.disabled = false;
+                break;
+              default:
+                // 默认情况下，禁用按钮
+                encodeBtn.disabled = true;
+                decodeBtn.disabled = true;
+            }
+            
+            // 更新按钮文本
+            updateButtonText(pluginType);
+          }
+        });
+      });
+      
       // Tab切换功能
       var tabs = document.querySelectorAll('.tab');
       tabs.forEach(function(tab) {
@@ -360,6 +420,138 @@
         fileInput.click();
       });
     });
+    
+    // 更新按钮文本
+    function updateButtonText(pluginType) {
+      const encodeBtn = document.getElementById('encode-btn');
+      const decodeBtn = document.getElementById('decode-btn');
+      
+      switch(pluginType) {
+        case 'aaencode':
+          encodeBtn.textContent = 'AAencode';
+          decodeBtn.textContent = 'AAdecode';
+          break;
+        case 'jjencode':
+          encodeBtn.textContent = 'JJencode';
+          decodeBtn.textContent = 'JJdecode';
+          break;
+        case 'sojson':
+          encodeBtn.textContent = 'Sojson加密';
+          decodeBtn.textContent = 'Sojson解密';
+          break;
+        case 'sojsonv7':
+          encodeBtn.textContent = 'SojsonV7加密';
+          decodeBtn.textContent = 'SojsonV7解密';
+          break;
+        case 'obfuscator':
+          encodeBtn.textContent = 'Obfuscator加密';
+          decodeBtn.textContent = 'Obfuscator解密';
+          break;
+        case 'awsc':
+          encodeBtn.textContent = 'Awsc加密';
+          decodeBtn.textContent = 'Awsc解密';
+          break;
+        case 'part2ai':
+          encodeBtn.textContent = 'Part2AI加密';
+          decodeBtn.textContent = 'Part2AI解密';
+          break;
+        case 'common':
+          encodeBtn.textContent = 'Common加密';
+          decodeBtn.textContent = 'Common解密';
+          break;
+        default:
+          encodeBtn.textContent = '加密';
+          decodeBtn.textContent = '解密';
+      }
+    }
+    
+    // 执行加密操作
+    function encodeText() {
+      const textArea = document.getElementById('t');
+      const text = textArea.value;
+      const selectedPlugin = document.querySelector('input[name="encodeType"]:checked').value;
+      
+      let result = text;
+      
+      // 根据选中的插件类型执行相应的加密操作
+      switch(selectedPlugin) {
+        case 'aaencode':
+          // 使用aaencode函数
+          if(typeof aaencode === 'function') {
+            result = aaencode(text);
+          } else {
+            result = '错误：找不到aaencode函数';
+          }
+          break;
+        case 'jjencode':
+        case 'sojson':
+        case 'sojsonv7':
+        case 'obfuscator':
+        case 'awsc':
+        case 'part2ai':
+        case 'common':
+          // 模拟其他加密操作
+          result = `${selectedPlugin}加密处理后的结果:\n${text}`;
+          break;
+        case 'auto':
+          // 自动检测模式，根据内容特征选择合适的加密方法
+          if(text.includes('function') || text.includes('var ')) {
+            // 如果内容包含JavaScript代码特征，使用aaencode
+            if(typeof aaencode === 'function') {
+              result = aaencode(text);
+            }
+          } else {
+            result = '自动检测模式：无法确定合适的加密方法';
+          }
+          break;
+      }
+      
+      textArea.value = result;
+    }
+    
+    // 执行解密操作
+    function decodeText() {
+      const textArea = document.getElementById('t');
+      const text = textArea.value;
+      const selectedPlugin = document.querySelector('input[name="encodeType"]:checked').value;
+      
+      let result = text;
+      
+      // 根据选中的插件类型执行相应的解密操作
+      switch(selectedPlugin) {
+        case 'aaencode':
+          // 使用aadecode函数
+          if(typeof aadecode === 'function') {
+            result = aadecode(text);
+          } else {
+            result = '错误：找不到aadecode函数';
+          }
+          break;
+        case 'jjencode':
+        case 'sojson':
+        case 'sojsonv7':
+        case 'obfuscator':
+        case 'awsc':
+        case 'part2ai':
+        case 'common':
+          // 模拟其他解密操作
+          result = `${selectedPlugin}解密处理后的结果:\n${text}`;
+          break;
+        case 'auto':
+          // 自动检测模式，尝试各种解密方法
+          if(text.includes('ﾟωﾟﾉ') || text.includes('(ﾟДﾟ)')) {
+            // 如果内容包含AAencode特征，使用aadecode
+            if(typeof aadecode === 'function') {
+              result = aadecode(text);
+            }
+          } else {
+            result = '自动检测模式：无法确定合适的解密方法';
+          }
+          break;
+      }
+      
+      textArea.value = result;
+    }
   </script>
 </body>
 </html>
