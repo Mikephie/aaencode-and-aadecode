@@ -314,7 +314,7 @@
   <script src="./sojsonv7.js"></script>
   <script src="./obfuscator.js"></script>
   <script src="./awsc.js"></script>
-  <script src="./eval.js"></script>
+  <script src="./evaldecode.js"></script>
   <script src="./common.js"></script>
   
   <script>
@@ -583,7 +583,7 @@
         case 'awsc':
           result = awscEncode(text);
           break;
-        case 'part2ai':
+        case 'eval':
           result = evalEncode(text);
           break;
         case 'common':
@@ -630,7 +630,7 @@
         case 'awsc':
           result = awscDecode(text);
           break;
-        case 'part2ai':
+        case 'eval':
           result = evalDecode(text);
           break;
         case 'common':
