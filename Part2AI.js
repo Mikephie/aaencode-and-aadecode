@@ -1,37 +1,71 @@
 /**
- * Part2AI特定混淆解密器
- * 专门解密以eval(function(p,a,c,k,e,d){...开头的混淆代码
+ * 用于解密Dean Edwards packer格式的混淆代码
+ * 这种格式通常以 eval(function(p,a,c,k,e,d){... 开头
  */
 
-function part2decode(code) {
-  // 检查是否是特定格式的混淆代码
-  if (!code.includes('eval(function(p,a,c,k,e,d)')) {
-    console.error('不是Part2AI支持的混淆格式');
+function unpackEvil(p) {
+  try {
+    // 直接使用eval执行混淆代码并返回结果
+    // 这种方法简单直接，但在某些环境下可能有安全风险
+    return eval('(' + p + ')');
+  } catch (e) {
+    console.error("解密失败:", e);
     return null;
+  }
+}
+
+function unpack(p) {
+  // 更安全的方法，避免直接使用eval
+  try {
+    // 如果代码以eval开头，移除eval并直接执行函数内容
+    if (p.indexOf('eval(') === 0) {
+      p = p.substring(5, p.length - 1);
+      
+      // 使用Function构造函数代替eval
+      var unpacked = new Function('return ' + p)();
+      return unpacked;
+    } else {
+      // 如果不是以eval开头，可能已经是解包后的代码
+      return p;
+    }
+  } catch (e) {
+    console.error("解密失败:", e);
+    return null;
+  }
+}
+
+// 多层解包函数
+function multiUnpack(code, maxLayers = 10) {
+  let currentCode = code;
+  let layer = 0;
+  
+  console.log('开始解包...');
+  
+  while (layer < maxLayers) {
+    layer++;
+    
+    let prevCode = currentCode;
+    console.log(`进行第 ${layer} 层解包...`);
+    
+    // 尝试解包
+    let result = unpack(currentCode);
+    
+    if (!result || result === currentCode) {
+      console.log(`解包完成，共 ${layer-1} 层`);
+      break;
+    }
+    
+    currentCode = result;
   }
   
-  try {
-    // 移除eval外壳，直接执行函数内容
-    code = code.replace(/^\s*eval\s*/, 'return ');
-    
-    // 使用Function构造函数执行代码，更安全
-    const func = new Function(code);
-    const result = func();
-    
-    return result;
-  } catch (e) {
-    console.error('解密失败:', e);
-    return null;
+  if (layer >= maxLayers) {
+    console.log(`警告：已达到最大解包层数 ${maxLayers}，可能未完全解包`);
   }
+  
+  return currentCode;
 }
 
-function part2encode(code) {
-  // 简单的混淆实现
-  return `eval(function(p,a,c,k,e,d){e=function(c){return c};if(!''.replace(/^/,String)){while(c--){d[c]=k[c]||c}k=[function(e){return d[e]}];e=function(){return'\\\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\\\b'+e(c)+'\\\\b','g'),k[c])}}return p}('${code}',${code.length},${code.length},'${[...Array(code.length)].map((_, i) => i).join('|')}'.split('|'),0,{}))`;
-}
-
-// 导出函数，使其可以在全局范围内使用
-if (typeof window !== 'undefined') {
-  window.part2decode = part2decode;
-  window.part2encode = part2encode;
-}
+// 暴露到全局
+window.unpack = unpack;
+window.unpackEvil = unpackEvil;
+window.multiUnpack = multiUnpack;
